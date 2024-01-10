@@ -1,0 +1,19 @@
+img.sphere {
+  animation: mover 1s infinite alternate;
+}
+
+@keyframes mover {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-25px);
+  }
+}
+
+h1.heading {
+  color: white;
+  font-size: 60px;
+  font-family: monospace;
+  font-weight: 600;
+}
