@@ -5,6 +5,10 @@
   "dependencies": {
     "@aave/core-v3": "^1.18.0",
     "@chainlink/contracts": "^0.8.0",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/roboto": "^5.0.8",
+    "@mui/material": "^5.15.3",
     "@openzeppelin/contracts": "^5.0.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
