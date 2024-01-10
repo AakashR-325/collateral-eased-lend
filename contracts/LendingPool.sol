@@ -7,10 +7,10 @@ import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 contract LendingPool {
     using Math for uint256;
 
-    mapping(address => uint256) userToDeposit;
-    mapping(address => uint256) userToBorrows;
-    mapping(address => uint256) depositTimestamp;
-    mapping(address => uint256) borrowTimestamp;
+    mapping(address => uint256) public userToDeposit;
+    mapping(address => uint256) public userToBorrows;
+    mapping(address => uint256) public depositTimestamp;
+    mapping(address => uint256) public borrowTimestamp;
 
     uint256 public constant DEPOSIT_INTEREST_RATE = 5;
     uint256 public constant BORROW_INTEREST_RATE = 8;
@@ -106,8 +106,8 @@ contract LendingPool {
         );
     }
 
-    function approveUSDC(uint256 _amount) external {
-        usdc.approve(address(this), _amount);
+    function approveUSDC(uint256 _amount) external returns (bool) {
+        return usdc.approve(address(this), _amount);
     }
 
     function getAllowance() external view returns (uint256 allowance) {

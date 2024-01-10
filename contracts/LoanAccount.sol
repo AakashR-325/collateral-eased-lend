@@ -3,19 +3,18 @@ pragma solidity ^0.8.10;
 
 import {IERC20} from "@aave/core-v3/contracts/dependencies/openzeppelin/contracts/IERC20.sol";
 import {LendingPool} from "./LendingPool.sol";
-import {SafeMath} from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
 contract Loan {
-    using SafeMath for uint256;
-    LendingPool private pool;
+    using Math for uint256;
+    LendingPool public pool;
 
-    address private immutable usdcAddress =
+    address public constant usdcAddress =
         0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8;
-    address public immutable daiAddress =
+    address public constant daiAddress =
         0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357;
-    address public immutable linkAddress =
-        0xf8Fb3713D459D7C1018BD0A49D19b4C44290EBE5;
+    address constant linkAddress = 0xf8Fb3713D459D7C1018BD0A49D19b4C44290EBE5;
 
     address[3] public assets = [usdcAddress, daiAddress, linkAddress];
 
@@ -69,27 +68,36 @@ contract Loan {
         userToFunded[msg.sender] -= _amount;
     }
 
-    function borrow() external solventAfter {}
+    function borrow(uint256 _amount) external solventAfter {
+        pool.borrow(_amount);
+    }
 
-    function repay() external {}
+    function repay(uint256 _amount) external {
+        pool.repay(_amount);
+    }
 
-    //function trade(address _tokenAddress) external payable{}
-    //function liquidate() external {}
+    // function trade(address _tokenAddress) external payable{}
+    // function liquidate() external {}
 
     function getSolvencyRatio() public view returns (uint256 solvencyRatio) {
-        uint256 debt = pool.userToBorrows(msg.sender);
+        uint256 debt = getBorrows();
         uint256 totalAccountValue = getTotalAccountValue();
-        solvencyRatio = totalAccountValue.mul(100).div(debt);
+        solvencyRatio = Math.mulDiv(totalAccountValue, 100, debt);
     }
 
     function getTotalAccountValue() public view returns (uint256) {
         uint256 total = 0;
         for (uint256 i = 0; i < assets.length; i++) {
-            total += IERC20(assets[i]).balanceOf(address(this)).mul(
-                uint256(getTokenPrice(i))
-            );
+            (, uint256 toAdd) = (IERC20(assets[i]).balanceOf(address(this)))
+                .tryMul(uint256(getTokenPrice(i)));
+
+            total += toAdd;
         }
         return total;
+    }
+
+    function getBorrows() public view returns (uint256 borrows) {
+        borrows = pool.userToBorrows(msg.sender);
     }
 
     function getTokenPrice(uint256 _index) internal view returns (int) {
