@@ -10,10 +10,3 @@ img.sphere {
     transform: translateY(-25px);
   }
 }
-
-h1.heading {
-  color: white;
-  font-size: 60px;
-  font-family: monospace;
-  font-weight: 600;
-}
